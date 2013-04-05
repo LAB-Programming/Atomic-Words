@@ -1,5 +1,7 @@
 package net.clonecomputers.lab;
 
+import java.util.Set;
+
 public class AtomicWords {
 	
 	private static final String HELP = "\nEnter a word to find out" +
@@ -31,7 +33,7 @@ public class AtomicWords {
 				}
 			} else {
 				System.out.println("Atomicizing word!");
-				//TODO convert word to atomic symbols
+				//System.out.println(parse()); TODO make method parse that returns a set of different ways to spell the word in atomic symbols
 			}
 		}
 		System.out.println("Exiting Atomic Words");
