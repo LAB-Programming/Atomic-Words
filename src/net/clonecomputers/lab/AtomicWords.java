@@ -29,7 +29,7 @@ public class AtomicWords {
 			if(isCommand) input = input.substring(1);
 			input = input.trim();
 			if(input.matches(".*[^A-Za-z].*")) {
-				System.out.println("This program cannot parse non-word characters");
+				System.out.println("This program does not work with non-word characters");
 				continue;
 			} else if(isCommand) {
 				if(input.equalsIgnoreCase("help")) {
