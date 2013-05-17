@@ -1,6 +1,8 @@
 package net.clonecomputers.lab;
 
+import java.util.HashSet;
 import java.util.Set;
+
 
 public class AtomicWords {
 	
@@ -26,6 +28,7 @@ public class AtomicWords {
 			if(isCommand) input = input.substring(1);
 			input = input.trim();
 			if(input.matches(".*[^A-Za-z].*")) {
+				System.out.println("This program cannot parse non-word characters");
 				continue;
 			} else if(isCommand) {
 				if(input.equalsIgnoreCase("help")) {
@@ -33,9 +36,53 @@ public class AtomicWords {
 				}
 			} else {
 				System.out.println("Atomicizing word!");
-				//System.out.println(parse()); TODO make method parse that returns a set of different ways to spell the word in atomic symbols
+				Set<String> output = parse(input); //TODO make method parse that returns a set of different ways to spell the word in atomic symbols
+				if(output.size() > 0) {
+					System.out.println(output);
+				} else {
+					System.out.println("There is no way to spell " + input + " using atomic symbols");
+				}
 			}
 		}
 		System.out.println("Exiting Atomic Words");
+	}
+	
+	private static Set<String> parse(String input) {
+		Set<String> spellings = new HashSet<String>();
+		if(input.length() > 1 && ElementData.getElementBySymbol(input.substring(0, 2)) != null) {
+			String atomicSymbol = ElementData.getElementBySymbol(input.substring(0, 2)).name();
+			if(input.length() > 2) {
+				Set<String> theRest = parse(input.substring(2));
+				spellings.addAll(prependStringToStringsInSet(atomicSymbol, theRest));
+			} else {
+				spellings.add(atomicSymbol);
+			}
+		}
+		if(input.length() > 0 && ElementData.getElementBySymbol(input.substring(0, 1)) != null) {
+			String atomicSymbol = ElementData.getElementBySymbol(input.substring(0, 1)).name();
+			if(input.length() > 1) {
+				Set<String> theRest = parse(input.substring(1));
+				spellings.addAll(prependStringToStringsInSet(atomicSymbol, theRest));
+			} else {
+				spellings.add(atomicSymbol);
+			}
+		}
+		return spellings;
+	}
+	
+	@SuppressWarnings("unchecked")
+	static Set<String> prependStringToStringsInSet(String s, final Set<String> set) {
+		if(set == null) return null;
+		Set<String> newSet = null;
+		try {
+			newSet = set.getClass().newInstance(); //complains about being unchecked
+		} catch (Exception e) {
+			e.printStackTrace();
+			return null;
+		}
+		for(String sOld : set) {
+			newSet.add(s + sOld);
+		}
+		return newSet;
 	}
 }

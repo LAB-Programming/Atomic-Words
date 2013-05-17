@@ -11,11 +11,12 @@ The goal is to create a program that accepts words as input and then outputs all
 * Basic Structure of main method
 * Help and Quit commands
 * Created Enum to hold info about elements
+* Enter info about elements
+* Works
 
 ####Short Term Plans:
-* Enter info about elements
-* Create code to loop through words to break them down into atomic symbols
+* Command to give more info about the atomic symbol spelling(s) of a word (in case someone hasn't memorized their atomic symbols)
+* Allow command to export a word as an image file where each atomic symbol is in a box like the ones on the periodic table of elements
 
 ####Long Term Plans:
 * Allow ion "+" symbol to be used as a "t" when it is allowed (ie when the element has the +1 oxidation state)
-* Allow command to export a word as an image file where each atomic symbol is in a box like the ones on the periodic table of elements

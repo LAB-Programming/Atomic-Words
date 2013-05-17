@@ -1,7 +1,5 @@
 package net.clonecomputers.lab;
 
-import java.util.HashMap;
-
 public enum ElementData {
 
 	H("Hydrogen", 1, "1.008"),
@@ -119,13 +117,28 @@ public enum ElementData {
 	Fl("Flerovium", 114, "[289]"),
 	Lv("Livermorium", 116, "[293]");
 	
+	@SuppressWarnings("unused")
 	private final String name;
+	@SuppressWarnings("unused")
 	private final int number;
+	@SuppressWarnings("unused")
 	private final String mass;
 	
 	private ElementData(String elementName, int atomicNumber, String atomicMass) {
 		name = elementName;
 		number = atomicNumber;
 		mass = atomicMass;
+	}
+	
+	public static ElementData getElementBySymbol(String symbol) {
+		if(symbol.length() > 2) return null;
+		String properSymbol = symbol.substring(0, 1).toUpperCase() + symbol.substring(1).toLowerCase();
+		ElementData element;
+		try {
+			element = valueOf(properSymbol);
+		} catch(IllegalArgumentException e) {
+			return null;
+		}
+		return element;
 	}
 }
