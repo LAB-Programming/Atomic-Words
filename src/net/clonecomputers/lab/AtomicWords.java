@@ -1,5 +1,6 @@
 package net.clonecomputers.lab;
 
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -53,7 +54,7 @@ public class AtomicWords {
 			String atomicSymbol = ElementData.getElementBySymbol(input.substring(0, 2)).name();
 			if(input.length() > 2) {
 				Set<String> theRest = parse(input.substring(2));
-				spellings.addAll(prependStringToStringsInSet(atomicSymbol, theRest));
+				spellings.addAll(prependStringToStringsInCollection(atomicSymbol, theRest));
 			} else {
 				spellings.add(atomicSymbol);
 			}
@@ -62,7 +63,7 @@ public class AtomicWords {
 			String atomicSymbol = ElementData.getElementBySymbol(input.substring(0, 1)).name();
 			if(input.length() > 1) {
 				Set<String> theRest = parse(input.substring(1));
-				spellings.addAll(prependStringToStringsInSet(atomicSymbol, theRest));
+				spellings.addAll(prependStringToStringsInCollection(atomicSymbol, theRest));
 			} else {
 				spellings.add(atomicSymbol);
 			}
@@ -71,18 +72,18 @@ public class AtomicWords {
 	}
 	
 	@SuppressWarnings("unchecked")
-	static Set<String> prependStringToStringsInSet(String s, final Set<String> set) {
-		if(set == null) return null;
-		Set<String> newSet = null;
+	static <T extends Collection<String>> T prependStringToStringsInCollection(String s, final T col) throws UnsupportedOperationException {
+		if(col == null) return null;
+		T newCol = null;
 		try {
-			newSet = set.getClass().newInstance(); //complains about being unchecked
+			newCol = (T) col.getClass().newInstance(); //complains about being unchecked
 		} catch (Exception e) {
 			e.printStackTrace();
 			return null;
 		}
-		for(String sOld : set) {
-			newSet.add(s + sOld);
+		for(String sOld : col) {
+			newCol.add(s + sOld);
 		}
-		return newSet;
+		return newCol;
 	}
 }
