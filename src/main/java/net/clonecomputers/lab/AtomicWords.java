@@ -49,16 +49,13 @@ public class AtomicWords {
 	}
 	
 	private static Set<String> parse(String input) {
-		if(input.length() < 1) return new HashSet<String>();
-		Set<String> spellings = null;
-		// recursion appears to be an acceptable procedure here as you appear to need indefinitely nested loops to do this non-recursively
+		Set<String> spellings = new HashSet<String>();
 		if(input.length() > 1 && ElementData.getElementBySymbol(input.substring(0, 2)) != null) {
 			String atomicSymbol = ElementData.getElementBySymbol(input.substring(0, 2)).name();
 			if(input.length() > 2) {
 				Set<String> theRest = parse(input.substring(2));
-				spellings = prependStringToStringsInCollection(atomicSymbol, theRest);
+				spellings.addAll(prependStringToStringsInCollection(atomicSymbol, theRest));
 			} else {
-				spellings = new HashSet<String>();
 				spellings.add(atomicSymbol);
 			}
 		}
@@ -66,9 +63,8 @@ public class AtomicWords {
 			String atomicSymbol = ElementData.getElementBySymbol(input.substring(0, 1)).name();
 			if(input.length() > 1) {
 				Set<String> theRest = parse(input.substring(1));
-				spellings = prependStringToStringsInCollection(atomicSymbol, theRest);
+				spellings.addAll(prependStringToStringsInCollection(atomicSymbol, theRest));
 			} else {
-				spellings = new HashSet<String>();
 				spellings.add(atomicSymbol);
 			}
 		}
