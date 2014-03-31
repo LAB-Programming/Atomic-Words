@@ -37,8 +37,8 @@ public class AtomicWords {
 				}
 			} else {
 				System.out.println("Atomicizing word!");
-				Set<String> output = parse(input); //TODO make method parse that returns a set of different ways to spell the word in atomic symbols
-				if(output.size() > 0) {
+				Set<String> output = parse(input);
+				if(output != null && output.size() > 0) {
 					System.out.println(output);
 				} else {
 					System.out.println("There is no way to spell " + input + " using atomic symbols");
