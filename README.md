@@ -2,7 +2,9 @@
 
 ---
 ###Goals:
-The goal is to create a program that accepts words as input and then outputs all the possible ways, if any, to form the words using only atomic symbols (e.g. Hg, As) and then maybe to allow some way for it to save the word as an image file where the atomic symbols are in boxes with their number, mass and full name.
+The goal is to create a program that accepts words as input and then outputs all the possible ways, if any,
+to form the words using only atomic symbols (e.g. Hg, As) and then maybe to allow some way for it to save
+the word as an image file where the atomic symbols are in boxes with their number, mass and full name.
 
 ---
 ###Objectives:
@@ -15,8 +17,9 @@ The goal is to create a program that accepts words as input and then outputs all
 * Works
 
 ####Short Term Plans:
+* Allow element data to be loaded from file
+* Create command to export a word as an image file where each atomic symbol is in a box like the ones on the periodic table of elements
 * Command to give more info about the atomic symbol spelling(s) of a word (in case someone hasn't memorized their atomic symbols)
-* Allow command to export a word as an image file where each atomic symbol is in a box like the ones on the periodic table of elements
 
 ####Long Term Plans:
-* Allow ion "+" symbol to be used as a "t" when it is allowed (ie when the element has the +1 oxidation state)
+* GUI
