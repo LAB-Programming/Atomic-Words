@@ -1,0 +1,43 @@
+<?xml version="1.0"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+   targetNamespace="http://lab.clonecomputers.net" xmlns:tns="http://lab.clonecomputers.net"
+   xmlns="http://lab.clonecomputers.net" elementFormDefault="qualified">
+   <xs:element name="elements">
+      <xs:complexType>
+         <xs:choice maxOccurs="unbounded">
+            <xs:element name="element" type="elementType" />
+         </xs:choice>
+      </xs:complexType>
+      <xs:unique name="uniqueAtomicSymbol">
+         <xs:selector xpath="tns:element" />
+         <xs:field xpath="tns:symbol" />
+      </xs:unique>
+   </xs:element>
+   <xs:complexType name="elementType">
+      <xs:all>
+         <xs:element name="symbol">
+            <xs:simpleType>
+               <xs:restriction base="xs:string">
+                  <xs:pattern value="[A-Z][a-z]?" />
+               </xs:restriction>
+            </xs:simpleType>
+         </xs:element>
+         <xs:element name="name">
+            <xs:simpleType>
+               <xs:restriction base="xs:string">
+                  <xs:pattern value="[^\s].*[^\s]" />
+               </xs:restriction>
+            </xs:simpleType>
+         </xs:element>
+         <xs:element name="number" type="xs:integer" />
+         <xs:element name="mass">
+            <xs:simpleType>
+               <xs:restriction base="xs:string">
+                  <!-- This pattern matches all decimals as well as all integers inside brackets -->
+                  <xs:pattern value="(-?[1-9][0-9]*(\.[0-9]+)?)|(\[-?[1-9][0-9]*\])|(-?0\.[0-9]+)|(\[0\])|0" />
+               </xs:restriction>
+            </xs:simpleType>
+         </xs:element>
+      </xs:all>
+   </xs:complexType>
+</xs:schema>

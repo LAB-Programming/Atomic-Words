@@ -1,9 +1,15 @@
 package net.clonecomputers.lab;
 
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
+import javax.xml.parsers.ParserConfigurationException;
+
+import org.xml.sax.InputSource;
+import org.xml.sax.SAXException;
 
 public class AtomicWords {
 	
@@ -15,9 +21,16 @@ public class AtomicWords {
 									   "\nCommands are:" +
 									   "\n  \"help\" to show this dialog" +
 									   "\n  \"quit\", \"exit\", or \"stop\" to exit\n";
-									   
 	
-	public static void main(String[] args) {
+	private static ElementData data;
+	
+	
+	public static void main(String[] args) throws SAXException, ParserConfigurationException, IOException {
+		if(args.length < 1) {
+			data = new ElementData(ElementData.DEFAULT_DATA_FILE);
+		} else {
+			data = new ElementData(new InputSource(new FileInputStream(args[0])));
+		}
 		System.out.println("Atomic Words started");
 		System.out.println(HELP);
 		String input = "";
@@ -50,8 +63,8 @@ public class AtomicWords {
 	
 	private static Set<String> parse(String input) {
 		Set<String> spellings = new HashSet<String>();
-		if(input.length() > 1 && ElementData.getElementBySymbol(input.substring(0, 2)) != null) {
-			String atomicSymbol = ElementData.getElementBySymbol(input.substring(0, 2)).name();
+		if(input.length() > 1 && data.getElementBySymbol(input.substring(0, 2)) != null) {
+			String atomicSymbol = data.getElementBySymbol(input.substring(0, 2)).getAtomicSymbol();
 			if(input.length() > 2) {
 				Set<String> theRest = parse(input.substring(2));
 				spellings.addAll(prependStringToStringsInCollection(atomicSymbol, theRest));
@@ -59,8 +72,8 @@ public class AtomicWords {
 				spellings.add(atomicSymbol);
 			}
 		}
-		if(input.length() > 0 && ElementData.getElementBySymbol(input.substring(0, 1)) != null) {
-			String atomicSymbol = ElementData.getElementBySymbol(input.substring(0, 1)).name();
+		if(input.length() > 0 && data.getElementBySymbol(input.substring(0, 1)) != null) {
+			String atomicSymbol = data.getElementBySymbol(input.substring(0, 1)).getAtomicSymbol();
 			if(input.length() > 1) {
 				Set<String> theRest = parse(input.substring(1));
 				spellings.addAll(prependStringToStringsInCollection(atomicSymbol, theRest));
