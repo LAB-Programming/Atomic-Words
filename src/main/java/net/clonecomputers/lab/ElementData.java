@@ -19,9 +19,19 @@ import org.xml.sax.helpers.DefaultHandler;
 public class ElementData {
 	
 	public static final String SCHEMA_FILE = "/xml" + File.separator + "elementDataSchema.xsd";
-	public static final InputSource DEFAULT_DATA_FILE = new InputSource(ElementData.class.getResourceAsStream("/xml" + File.separator + "defaultElementData.xml"));
+	public static final InputSource DEFAULT_DATA_FILE;
 	
 	private HashMap<String, Element> elements;
+	
+	static {
+		String dataFile = "/xml" + File.separator + "defaultElementData.xml";
+		try {
+			DEFAULT_DATA_FILE = new InputSource(ElementData.class.getResourceAsStream(dataFile));
+		} catch(NullPointerException e) {
+			AtomicWords.logger.severe("Cannot find default data file at " + dataFile + "! JAR is most likely corrupt!");
+			throw e;
+		}
+	}
 	
 	public ElementData(InputSource dataFile) throws SAXException, ParserConfigurationException, IOException {
 		ValidatorHandler val = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI).newSchema(this.getClass().getResource(SCHEMA_FILE)).newValidatorHandler();

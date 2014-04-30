@@ -5,6 +5,11 @@ import java.io.IOException;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.logging.ConsoleHandler;
+import java.util.logging.FileHandler;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import java.util.logging.SimpleFormatter;
 
 import javax.xml.parsers.ParserConfigurationException;
 
@@ -24,12 +29,53 @@ public class AtomicWords {
 	
 	private static ElementData data;
 	
+	static final Logger logger = Logger.getLogger("net.clonecomputers.lab.atomicwords");
 	
-	public static void main(String[] args) throws SAXException, ParserConfigurationException, IOException {
-		if(args.length < 1) {
-			data = new ElementData(ElementData.DEFAULT_DATA_FILE);
-		} else {
-			data = new ElementData(new InputSource(new FileInputStream(args[0])));
+	static {
+		logger.setUseParentHandlers(false);
+		ConsoleHandler consoleHandler = new ConsoleHandler();
+		consoleHandler.setLevel(Level.SEVERE);
+		logger.addHandler(consoleHandler);
+		try {
+			FileHandler fileHandler = new FileHandler("atomic-words%u.log");
+			fileHandler.setLevel(Level.INFO);
+			fileHandler.setFormatter(new SimpleFormatter());
+			logger.addHandler(fileHandler);
+		} catch(IOException e) {
+			logger.log(Level.SEVERE, "Can not open log file, file logging disabled!", e);
+		}
+	}
+	
+	public static void main(String[] args) {
+		try {
+			if(args.length < 1) {
+				data = new ElementData(ElementData.DEFAULT_DATA_FILE);
+			} else {
+				data = new ElementData(new InputSource(new FileInputStream(args[0])));
+			}
+		} catch(SAXException e) {
+			logger.log(Level.SEVERE, "Error most likely from parsing XML data file", e);
+			if(args.length > 0) {
+				logger.info("Falling back on default data file");
+				System.out.println("Using default data file instead");
+				main(new String[]{});
+			} else {
+				logger.severe("Error parsing default XML data file, JAR may be corrupt");
+			}
+			System.exit(3);
+		} catch(ParserConfigurationException e) {
+			logger.log(Level.SEVERE, "Error creating XML parser", e);
+			System.exit(2);
+		} catch(IOException e) {
+			logger.log(Level.SEVERE, "Error reading XML data file", e);
+			if(args.length > 0) {
+				logger.info("Falling back on default data file");
+				System.out.println("Using default data file instead");
+				main(new String[]{});
+			} else {
+				logger.severe("Error reading from default XML data file, JAR may be corrupt");
+			}
+			System.exit(1);
 		}
 		System.out.println("Atomic Words started");
 		System.out.println(HELP);
