@@ -1,7 +1,9 @@
 package net.clonecomputers.lab;
 
+import java.io.BufferedReader;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
@@ -81,13 +83,20 @@ public class AtomicWords {
 			}
 			System.exit(1);
 		}
+		BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
+		String input = "";
+		boolean isCommand = false;
 		logger.info("Atomic Words started");
 		System.out.println("Atomic Words started");
 		System.out.println(HELP);
-		String input = "";
-		boolean isCommand = false;
 		while(!(isCommand && (input.equalsIgnoreCase("quit") || input.equalsIgnoreCase("exit") || input.equalsIgnoreCase("stop")))) {
-			input = System.console().readLine(">");
+			System.out.print(">");
+			try {
+				input = in.readLine();
+			} catch(IOException e) {
+				logger.log(Level.SEVERE, "Error reading input!", e);
+				continue;
+			}
 			if(input.isEmpty()) continue;
 			isCommand = !Character.isLetter(input.charAt(0));
 			if(isCommand) input = input.substring(1);
