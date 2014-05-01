@@ -44,13 +44,17 @@ public class AtomicWords {
 		} catch(IOException e) {
 			logger.log(Level.SEVERE, "Can not open log file, file logging disabled!", e);
 		}
+		logger.fine("Finished setting up logger");
 	}
 	
 	public static void main(String[] args) {
 		try {
+			logger.fine("Loading XML data file");
 			if(args.length < 1) {
+				logger.finer("Loading from default data file");
 				data = new ElementData(ElementData.DEFAULT_DATA_FILE);
 			} else {
+				logger.finer("Loading from user specified data file at " + args[0]);
 				data = new ElementData(new InputSource(new FileInputStream(args[0])));
 			}
 		} catch(SAXException e) {
@@ -77,6 +81,7 @@ public class AtomicWords {
 			}
 			System.exit(1);
 		}
+		logger.info("Atomic Words started");
 		System.out.println("Atomic Words started");
 		System.out.println(HELP);
 		String input = "";
@@ -87,51 +92,70 @@ public class AtomicWords {
 			isCommand = !Character.isLetter(input.charAt(0));
 			if(isCommand) input = input.substring(1);
 			input = input.trim();
-			if(input.matches(".*[^A-Za-z].*")) {
-				System.out.println("This program does not work with non-word characters");
-				continue;
-			} else if(isCommand) {
+			if(isCommand) {
+				logger.fine("User command: " + input);
 				if(input.equalsIgnoreCase("help")) {
 					System.out.println(HELP);
+				} else {
+					logger.info("Unrecognized command: " + input);
+					System.out.println("Unrecognized command: " + input);
 				}
+			} else if(input.matches(".*[^A-Za-z].*")) {
+				logger.info("Bad symbol detected in " + input);
+				System.out.println("This program does not work with non-word characters");
+				continue;
 			} else {
+				logger.info("Parsing word: " + input);
 				System.out.println("Atomicizing word!");
 				Set<String> output = parse(input);
 				if(output != null && output.size() > 0) {
+					logger.info("Found " + output.size() + " ways of spelling " + input);
+					logger.fine(output.toString());
 					System.out.println(output);
 				} else {
+					logger.info("Found no ways of spelling " + input);
 					System.out.println("There is no way to spell " + input + " using atomic symbols");
 				}
 			}
 		}
+		logger.info("Program stopping");
 		System.out.println("Exiting Atomic Words");
 	}
 	
 	private static Set<String> parse(String input) {
+		logger.entering("AtomicWords", "parse", input);
 		Set<String> spellings = new HashSet<String>();
 		if(input.length() > 1 && data.getElementBySymbol(input.substring(0, 2)) != null) {
 			String atomicSymbol = data.getElementBySymbol(input.substring(0, 2)).getAtomicSymbol();
+			logger.finer("Start of " + input + " matches " + atomicSymbol);
 			if(input.length() > 2) {
+				logger.finest("Recursing with remainder of word");
 				Set<String> theRest = parse(input.substring(2));
 				spellings.addAll(prependStringToStringsInCollection(atomicSymbol, theRest));
 			} else {
+				logger.finest("None of word left, not recursing");
 				spellings.add(atomicSymbol);
 			}
 		}
 		if(input.length() > 0 && data.getElementBySymbol(input.substring(0, 1)) != null) {
 			String atomicSymbol = data.getElementBySymbol(input.substring(0, 1)).getAtomicSymbol();
+			logger.finer("Start of " + input + " matches " + atomicSymbol);
 			if(input.length() > 1) {
+				logger.finest("Recursing with remainder of word");
 				Set<String> theRest = parse(input.substring(1));
 				spellings.addAll(prependStringToStringsInCollection(atomicSymbol, theRest));
 			} else {
+				logger.finest("None of word left, not recursing");
 				spellings.add(atomicSymbol);
 			}
 		}
+		logger.exiting("AtomicWords", "parse", spellings);
 		return spellings;
 	}
 	
 	@SuppressWarnings("unchecked")
 	static <T extends Collection<String>> T prependStringToStringsInCollection(String s, final T col) throws UnsupportedOperationException {
+		logger.entering("AtomicWords", "prependStringToStringsInCollection", new Object[]{s, col});
 		if(col == null) return null;
 		T newCol = null;
 		try {
@@ -143,6 +167,7 @@ public class AtomicWords {
 		for(String sOld : col) {
 			newCol.add(s + sOld);
 		}
+		logger.exiting("AtomicWords", "prependStringToStringsInCollection", newCol);
 		return newCol;
 	}
 }
