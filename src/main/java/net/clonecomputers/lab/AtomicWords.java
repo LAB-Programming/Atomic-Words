@@ -89,7 +89,7 @@ public class AtomicWords {
 		logger.info("Atomic Words started");
 		System.out.println("Atomic Words started");
 		System.out.println(HELP);
-		while(!(isCommand && (input.equalsIgnoreCase("quit") || input.equalsIgnoreCase("exit") || input.equalsIgnoreCase("stop")))) {
+		while(true) {
 			System.out.print(">");
 			try {
 				input = in.readLine();
@@ -105,6 +105,8 @@ public class AtomicWords {
 				logger.fine("User command: " + input);
 				if(input.equalsIgnoreCase("help")) {
 					System.out.println(HELP);
+				} else if(input.equalsIgnoreCase("quit") || input.equalsIgnoreCase("exit") || input.equalsIgnoreCase("stop")) {
+					break;
 				} else {
 					logger.info("Unrecognized command: " + input);
 					System.out.println("Unrecognized command: " + input);
