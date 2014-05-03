@@ -3,6 +3,7 @@ package net.clonecomputers.lab;
 import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.logging.Level;
 
 import javax.xml.XMLConstants;
 import javax.xml.parsers.ParserConfigurationException;
@@ -11,8 +12,10 @@ import javax.xml.validation.SchemaFactory;
 import javax.xml.validation.ValidatorHandler;
 
 import org.xml.sax.Attributes;
+import org.xml.sax.ErrorHandler;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
+import org.xml.sax.SAXParseException;
 import org.xml.sax.XMLReader;
 import org.xml.sax.helpers.DefaultHandler;
 
@@ -35,13 +38,12 @@ public class ElementData {
 	
 	public ElementData(InputSource dataFile) throws SAXException, ParserConfigurationException, IOException {
 		ValidatorHandler val = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI).newSchema(this.getClass().getResource(SCHEMA_FILE)).newValidatorHandler();
-		ElementXMLHandler handler = new ElementXMLHandler();
-		val.setContentHandler(handler);
+		val.setContentHandler(new ElementXMLHandler());
 		SAXParserFactory spf = SAXParserFactory.newInstance();
 		spf.setNamespaceAware(true);
 		XMLReader reader = spf.newSAXParser().getXMLReader();
 		reader.setContentHandler(val);
-		reader.setErrorHandler(handler);
+		reader.setErrorHandler(new ElementXMLErrorHandler());
 		reader.parse(dataFile);
 	}
 	
@@ -102,5 +104,36 @@ public class ElementData {
 				throw new SAXException("Bad XML element name!");
 			}
 		}
+	}
+	
+	private class ElementXMLErrorHandler implements ErrorHandler {
+		
+		private String getParseExceptionInfo(SAXParseException e) {
+	        String systemId = e.getSystemId();
+	        if (systemId == null) {
+	            systemId = "null";
+	        }
+	        String info = "URI=" + systemId + " Line=" + e.getLineNumber() + ": " + e.getMessage();
+	        return info;
+		}
+		
+		@Override
+		public void error(SAXParseException exception) throws SAXException {
+			AtomicWords.logger.log(Level.FINER, "SAX Parser Error", exception);
+			throw new SAXException("Error: " + getParseExceptionInfo(exception));
+		}
+
+		@Override
+		public void fatalError(SAXParseException exception) throws SAXException {
+			AtomicWords.logger.log(Level.FINER, "SAX Parser FATAL Error", exception);
+			throw new SAXException("Fatal: " + getParseExceptionInfo(exception));
+		}
+
+		@Override
+		public void warning(SAXParseException exception) throws SAXException {
+			AtomicWords.logger.warning("SAX Parser Warning: " + getParseExceptionInfo(exception));
+			AtomicWords.logger.log(Level.FINER, "SAX Parser Warning", exception);
+		}
+		
 	}
 }
