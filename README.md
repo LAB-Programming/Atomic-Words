@@ -16,9 +16,10 @@ the word as an image file where the atomic symbols are in boxes with their numbe
 * Enter info about elements
 * Works
 * Allow element data to be loaded from file
+* Add better error handling for parsing XML files
+* Decent logging in general
 
 ####Short Term Plans:
-* Add better error handling for parsing XML files
 * Create command to export a word as an image file where each atomic symbol is in a box like the ones on the periodic table of elements
 * Command to give more info about the atomic symbol spelling(s) of a word (in case someone hasn't memorized their atomic symbols)
 

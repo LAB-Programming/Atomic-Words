@@ -37,6 +37,7 @@ public class ElementData {
 	}
 	
 	public ElementData(InputSource dataFile) throws SAXException, ParserConfigurationException, IOException {
+		AtomicWords.logger.entering(this.getClass().getSimpleName(), "ElementData", dataFile);
 		ValidatorHandler val = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI).newSchema(this.getClass().getResource(SCHEMA_FILE)).newValidatorHandler();
 		val.setContentHandler(new ElementXMLHandler());
 		SAXParserFactory spf = SAXParserFactory.newInstance();
@@ -65,10 +66,12 @@ public class ElementData {
 		@Override
 		public void startDocument() throws SAXException {
 			elements = new HashMap<String, Element>();
+			AtomicWords.logger.finest("XML Parser: Starting XML document");
 		}
 		
 		@Override
 		public void startElement(String namespaceURI, String localName, String qName, Attributes atts) throws SAXException {
+			AtomicWords.logger.finest("XML Parser: Starting element (" + namespaceURI + "," + localName + "," + qName + ")");
 			if(!localName.equals("element") && !localName.equals("elements")) {
 				acc = new StringBuilder();
 			}
@@ -81,27 +84,37 @@ public class ElementData {
 		
 		@Override
 		public void endElement(String uri, String localName, String qName) throws SAXException {
+			AtomicWords.logger.entering(this.getClass().getSimpleName(), "endElement", new Object[] {uri, localName, qName});
 			if(localName.equals("mass")) {
+				AtomicWords.logger.finest("XML Parser: Mass recorded");
 				tempMass = acc.toString();
 			} else if(localName.equals("number")) {
+				AtomicWords.logger.finest("XML Parser: Number recorded");
 				tempNumber = acc.toString();
 			} else if(localName.equals("name")) {
+				AtomicWords.logger.finest("XML Parser: Name recorded");
 				tempName = acc.toString();
 			} else if(localName.equals("symbol")) {
+				AtomicWords.logger.finest("XML Parser: Symbol recorded");
 				tempSymbol = acc.toString();
 			} else if(localName.equals("element")) {
+				AtomicWords.logger.finer("XML Parser: End of element tag recording new Element(" + tempSymbol +"," + tempName + "," + tempNumber + "," + tempMass + ")");
 				try {
 					elements.put(tempSymbol, new Element(tempSymbol, tempName, tempNumber, tempMass));
 				} catch(NullPointerException e) {
-					throw new SAXException(e);
+					SAXException saxe = new SAXException("One or more data entries for an element were not found", e);
+					AtomicWords.logger.throwing(this.getClass().getSimpleName(), "endElement", saxe);
+					throw saxe;
 				}
 				tempSymbol = null;
 				tempName = null;
 				tempNumber = null;
 				tempMass = null;
-			} else if(localName.equals("elements"));
+			} else if(localName.equals("elements")); // we are done so we do not need to do anything
 			else {
-				throw new SAXException("Bad XML element name!");
+				SAXException e = new SAXException("Bad XML element name!");
+				AtomicWords.logger.throwing(this.getClass().getSimpleName(), "endElement", e);
+				throw e;
 			}
 		}
 	}
