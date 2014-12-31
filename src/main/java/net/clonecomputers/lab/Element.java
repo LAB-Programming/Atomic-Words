@@ -7,6 +7,13 @@ import java.awt.Image;
 import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
 
+/**
+ * A class for storing the data of a single element including its symbol,
+ * name, number, and mass. Soon it will also be able to return an image of the
+ * element as it would look on the periodic table
+ * @author louishyde
+ *
+ */
 public class Element {
 	
 	private final String symbol;
@@ -40,6 +47,12 @@ public class Element {
 	public String getAtomicMass() {
 		return mass;
 	}
+	
+	
+	// Below here everything is work in progress towards being able to create
+	// an image for the element that would look like its box on the periodic
+	// table of elements
+	
 	
 	public Image getImage(int height) {
 		int width = Math.round(height*0.9f);

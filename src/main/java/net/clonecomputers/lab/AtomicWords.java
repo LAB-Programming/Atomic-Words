@@ -18,6 +18,11 @@ import javax.xml.parsers.ParserConfigurationException;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
+/**
+ * This is the main class of Atomic Words.
+ * It contains the algorithm for figuring out if a word can be spelled from atomic symbols.
+ * @author louishyde
+ */
 public class AtomicWords {
 	
 	private static final String HELP = "\nEnter a word to find out" +
@@ -34,6 +39,7 @@ public class AtomicWords {
 	static final Logger logger = Logger.getLogger("net.clonecomputers.lab.atomicwords");
 	
 	static {
+		// set up logger when AtomicWords is statically initialized
 		logger.setUseParentHandlers(false);
 		ConsoleHandler consoleHandler = new ConsoleHandler();
 		consoleHandler.setLevel(Level.SEVERE);
@@ -106,11 +112,12 @@ public class AtomicWords {
 				if(input.equalsIgnoreCase("help")) {
 					System.out.println(HELP);
 				} else if(input.equalsIgnoreCase("quit") || input.equalsIgnoreCase("exit") || input.equalsIgnoreCase("stop")) {
-					break;
+					break; // exit out of loop to end program
 				} else {
 					logger.info("Unrecognized command: " + input);
 					System.out.println("Unrecognized command: " + input);
 				}
+			// check to make sure the input string contains no non-letter characters
 			} else if(input.matches(".*[^A-Za-z].*")) {
 				logger.info("Bad symbol detected in " + input);
 				System.out.println("This program does not work with non-word characters");
@@ -131,14 +138,22 @@ public class AtomicWords {
 		}
 		logger.info("Program stopping");
 		System.out.println("Exiting Atomic Words");
+		System.exit(0); // explicitly calling exit in case main was called in an if statement above
 	}
 	
+	/**
+	 * A function that when given a word figures out how to spell it with atomic symbols
+	 * @param input the word to spell with atomic symbols
+	 * @return a set of variations of the inputed word capitalized to show how atomic symbols were put together to spell it
+	 */
 	private static Set<String> parse(String input) {
 		logger.entering("AtomicWords", "parse", input);
 		Set<String> spellings = new HashSet<String>();
+		// If there are at least two characters left to check and the first two characters are an atomic symbol
 		if(input.length() > 1 && data.getElementBySymbol(input.substring(0, 2)) != null) {
 			String atomicSymbol = data.getElementBySymbol(input.substring(0, 2)).getAtomicSymbol();
 			logger.finer("Start of " + input + " matches " + atomicSymbol);
+			// recurse if the remainder of input is not empty
 			if(input.length() > 2) {
 				logger.finest("Recursing with remainder of word");
 				Set<String> theRest = parse(input.substring(2));
@@ -148,9 +163,11 @@ public class AtomicWords {
 				spellings.add(atomicSymbol);
 			}
 		}
+		// If there is at least one character left to check and the first character is an atomic symbol
 		if(input.length() > 0 && data.getElementBySymbol(input.substring(0, 1)) != null) {
 			String atomicSymbol = data.getElementBySymbol(input.substring(0, 1)).getAtomicSymbol();
 			logger.finer("Start of " + input + " matches " + atomicSymbol);
+			// recurse if the remainder of input is not empty
 			if(input.length() > 1) {
 				logger.finest("Recursing with remainder of word");
 				Set<String> theRest = parse(input.substring(1));
@@ -161,9 +178,19 @@ public class AtomicWords {
 			}
 		}
 		logger.exiting("AtomicWords", "parse", spellings);
+		// if neither of the two if statements were gone into then spellings will be empty
+		// this means that prependStringToStringInCollection is called on it it will still be empty
 		return spellings;
 	}
 	
+	/**
+	 * A generic method to prepend a passed String to all Strings in a Collection.
+	 * It is generic so that if I no longer want to use a Set to store my Strings I will not have to change this method.
+	 * @param s the String to prepend
+	 * @param col the Collection of Strings to prepend to
+	 * @return 
+	 * @throws UnsupportedOperationException if col is an immutable kind of Collection
+	 */
 	@SuppressWarnings("unchecked")
 	static <T extends Collection<String>> T prependStringToStringsInCollection(String s, final T col) throws UnsupportedOperationException {
 		logger.entering("AtomicWords", "prependStringToStringsInCollection", new Object[]{s, col});
@@ -176,7 +203,7 @@ public class AtomicWords {
 			return null;
 		}
 		for(String sOld : col) {
-			newCol.add(s + sOld);
+			newCol.add(s + sOld); // can throw UnsupportedOperationException
 		}
 		logger.exiting("AtomicWords", "prependStringToStringsInCollection", newCol);
 		return newCol;
