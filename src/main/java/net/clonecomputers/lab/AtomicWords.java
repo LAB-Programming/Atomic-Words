@@ -144,7 +144,7 @@ public class AtomicWords {
 	/**
 	 * A function that when given a word figures out how to spell it with atomic symbols
 	 * @param input the word to spell with atomic symbols
-	 * @return a set of variations of the inputed word capitalized to show how atomic symbols were put together to spell it
+	 * @return a set of capitalizations of @{code input} which show how atomic symbols were put together to spell them
 	 */
 	private static Set<String> parse(String input) {
 		logger.entering("AtomicWords", "parse", input);
@@ -189,7 +189,7 @@ public class AtomicWords {
 	 * @param s the String to prepend
 	 * @param col the Collection of Strings to prepend to
 	 * @return 
-	 * @throws UnsupportedOperationException if col is an immutable kind of Collection
+	 * @throws UnsupportedOperationException if {@code col} is an immutable kind of Collection
 	 */
 	@SuppressWarnings("unchecked")
 	static <T extends Collection<String>> T prependStringToStringsInCollection(String s, final T col) throws UnsupportedOperationException {

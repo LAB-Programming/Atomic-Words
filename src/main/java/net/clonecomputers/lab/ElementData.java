@@ -63,7 +63,7 @@ public class ElementData {
 	 * Finds the element with atomic symbol matching the argument.
 	 * Note that this is not case sensitive.
 	 * @param symbol the atomic symbol of the element that is being searched for
-	 * @return the element with atomic symbol of symbol
+	 * @return the element with atomic symbol of {@code symbol}
 	 */
 	public Element getElementBySymbol(String symbol) {
 		if(symbol.length() > 2) return null;
